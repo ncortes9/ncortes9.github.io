@@ -82,6 +82,7 @@
     font-weight: bold;
     font-family: "Poppins", sans-serif;
     display: flex;
+    padding: 5px;
 }
 
 .nav-links:hover {

@@ -163,6 +163,10 @@
     padding: 0px;
 }
 
-.reviews {
+.subsection-list {
     margin-left: 50px;
+}
+
+.subsection-header {
+    font-weight: bold;
 }

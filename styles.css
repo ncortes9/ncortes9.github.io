@@ -137,3 +137,32 @@
     flex-direction: column;
     gap: 10px;
 }
+
+.about-text {
+    margin-left: 50px;
+    margin-top: 20px;
+    margin-right: 50px;
+}
+
+.about-header {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.biography,
+.career-goals,
+.experience,
+.education,
+.skills {
+    font-size: 15px;
+    font-weight: normal;
+    font-family: 'Poppins', sans-serif;
+    padding: 0px;
+}
+
+.reviews {
+    margin-left: 50px;
+}

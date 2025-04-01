@@ -16,6 +16,7 @@
     left: 0;
     width: 100%;
     height: 100%;
+    overflow: auto;
 }
 
 .page-buttons-container {
@@ -87,4 +88,18 @@
 
 .nav-links:hover {
     color: rgb(163, 162, 162);
+}
+
+.resume-container {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.resume-download {
+    display: flex;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
 }

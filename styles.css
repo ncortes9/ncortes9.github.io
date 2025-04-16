@@ -196,7 +196,9 @@
 
 .project-creation,
 .project-about,
-.project-skills {
+.project-skills,
+.project-conclusion,
+.sources {
     font-size: 15px;
     font-weight: normal;
     font-family: 'Poppins', sans-serif;

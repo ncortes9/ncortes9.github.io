@@ -214,7 +214,8 @@
 .max30102-img,
 .solder-img,
 .device-img,
-.pin-img {
+.pin-img,
+.hr-data {
     width: auto;
     height: 200px;
     border-radius: 15px;
@@ -229,4 +230,14 @@
 .pin-img {
     width: 300px;
     height: auto;
+}
+
+.hr-data {
+    height: 350px;
+    width: auto;
+}
+
+.hr-video {
+    height: 400px;
+    width: auto;
 }

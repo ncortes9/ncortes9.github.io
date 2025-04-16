@@ -101,7 +101,84 @@
                     </div>
                     <div>
                         <p>
-                            This is how I interpreted the data.
+                            I was quite lost on how to get the data from the MAX30102 onto my computer, but I found 
+                            <a href="https://www.instructables.com/Guide-to-Using-MAX30102-Heart-Rate-and-Oxygen-Sens/">
+                            this article</a> which went into some detail on how to setup and use the MAX30102. In the 
+                            article, they use Sparkfun's library for the MAX30102 to detect heart beats. I took
+                            some inspiration from their code and got my own version running. However, I was unsatisfied
+                            with simply printing the BPM values to the terminal, and wanted to have a better visual for 
+                            the user.
+                        </p>
+                        <br>
+                        <p>
+                            I did some more research and found out I could transmit the MAX30102 data into a Python 
+                            program using the PySerial library. Python is great for data interpretation and 
+                            visualization, so this got me excited. With PySerial and Matplotlib for visualization,
+                            I wrote a program that would take the heart rate date and give me a good visualization.
+                        </p>
+                        <img class="hr-data" src="images/hr-data-1.png">
+                        <p>
+                            This is where I had originally planned on ending the project. However, as you can see, the 
+                            heart rate data is quite jumpy and innacurate. In my current implementation, I was using the 
+                            checkForBeat() method provided by Sparkfun's MAX30102 library, but it didn't seem to be 
+                            working to the standard I had originally wanted. It would miss beats very often, and 
+                            sometimes overcount beats leading to large jumps in BPM. I tried messing around with some 
+                            configurations still using this method, but ultimately decided that I wasn't going to be
+                            able to get accurate BPM measurements.
+                        </p>
+                        <br>
+                        <p>
+                            So what did I do? I was under the impression that my hardware was faulty or maybe just
+                            not precise enough to ever give me a chance at getting accurate BPM measurements. However,
+                            as one last try at improving the measurements, I decided to look at the raw IR data that
+                            the device was providing, and noticed that there was a clear spike in IR when my heart 
+                            was beating, and that I could clearly identify every heartbeat on the IR graph. However,
+                            the raw IR data was quite spiky and jumpy, and sat in the large range of 125,000 - 132,000.
+                            To fix this, I wrote some code to maintain a moving average of some fixed size, and for 
+                            each additional IR value that I receive, I would display (irValue - movingAvg), instead of
+                            the raw value. This smoothed out the data a lot and told me how each value corresponded to
+                            previous values, giving me a better chance at finding peaks where heart beats occur.
+                            <br><br>
+                            Visualizing the results of this approach in Python gave me the image below: (Note, this 
+                            visualization was made on pre-recorded data gathered by myself over the course of ~15
+                            seconds)
+                        </p>
+                        <img class="hr-data" src="images/hr-data-2.png">
+                        <p>
+                            For each heart beat, there is a small peak, followed by a large peak, followed by a big
+                            drop. The large peak occurs at the moment the heart beats, so
+                            now my goal was simple: find a way to identify the large peaks and keep track of
+                            them. I looked into several approaches by ended up deciding on using the SciPy library,
+                            which has a method called find_peaks. This method takes in several values, like a minimum
+                            height, minimum distance between peaks, prominence, etc, allowing for tuning based
+                            on different needs. After some experimenting, I achieved the graph below:
+                        </p>
+                        <img class="hr-data" src="images/hr-data-3.png">
+                        <p>
+                            This worked perfectly. Now that I've confirmed I can accurately identify peaks, I just need 
+                            to do this on live data. I had to tune the find_peaks to work on live data, giving the
+                            result below:
+                        </p>
+                        <video class="hr-video" controls>
+                            <source src="videos/ir-visualizer.mp4">
+                        </video>
+                        <p>
+                            Now that I can accurately identify heart beats with live data, all I need to do is edit 
+                            my code to take note of these heart beats and do some simple calculations to determine bpm.
+                            Similar to my display of the IR data, I decided to maintain a rolling average of bpm to
+                            reduce the effects of any random variations in heart rate (which are a natural occurence).
+                            I ran this on live data and got the result below:
+                        </p>
+                        <img class="hr-data" src="images/hr-data-4.png">
+                        <p>
+                            If you'll notice, the terminal is printing a statement every time my heart beats. I 
+                            implemented this so I could see how accurate my outputs were and found that it was around 
+                            95-98% correct. The accuracy greatly depends on being still and proper tuning of the 
+                            find_peaks method, likely due to the great sensitivity of the MAX30102 module. I compared
+                            these results to the heart rate measured by my Garmin Forerunner 245 fitness watch, and 
+                            saw that my device's displayed bpm was within 1 beat per minute of the Garmin watch, 
+                            meaning this new model is significantly more accurate than what I had when I was using the 
+                            default Sparkfun library.
                         </p>
                     </div>
                 </div>
@@ -109,7 +186,32 @@
                     Skills Learned
                 </div>
                 <div class="project-skills">
-                    These are the skills I learned while building this project.
+                    This project taught me a lot about a wide variety of ECE and CS topics.
+                    <ul class="subsection-list">
+                        <li>
+                            Soldering: I had to learn the basics of soldering to attach my MAX30102 to its header pins.
+                        </li>
+                        <li>
+                            Arduino/Microcontrollers: I needed to learn how to set up an Arduino and connect it to my
+                            computer along with the rest of my circuit to properly transmit the data.
+                        </li>
+                        <li>
+                            C++ & .ino Programming: To properly process the data that was being output through the 
+                            Arduino, I had to write some code to initialize and maintain the flow of data through the 
+                            two devices.
+                        </li>
+                        <li>
+                            Python & Data Interpretation: In order to accurately detect heart beats, I needed to use 
+                            several techniques like maintaining a rolling average, detrending the IR data, and detecting
+                            peaks in the data. This was all done manually except for finding peaks, which I used the 
+                            SciPy library for.
+                        </li>
+                        <li>
+                            Python & Data Visualization: To visualize the results of my data interpretation, I had to
+                            refresh my knowledge of Matplotlib and tinker with different settings to produce a
+                            satisfactory outcome.
+                        </li>
+                    </ul>
                 </div>
                 <div class="project-header">
                     Final Thoughts
@@ -117,9 +219,15 @@
                 <div class="project-conclusion">
                     These are my final thoughts on the project.
                 </div>
+                <div class="project-subheader">
+                    Sources
+                </div>
                 <div>
-                    Sources:
-                    https://www.instructables.com/Guide-to-Using-MAX30102-Heart-Rate-and-Oxygen-Sens/
+                    <ul>
+                        <a href="https://www.instructables.com/Guide-to-Using-MAX30102-Heart-Rate-and-Oxygen-Sens">
+                            Main article I used
+                        </a>
+                    </ul>
                 </div>
             </div>
         </div>
